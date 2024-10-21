@@ -23,10 +23,10 @@ func (r Rabbit) SendMessage(bodyMessage string) {
 	failOnError(err, "Failed to declare a queue")
 
 	err = ch.Publish(
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
+		"logs_exchange", // exchange
+		q.Name,          // routing key
+		false,           // mandatory
+		false,           // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(bodyMessage),
