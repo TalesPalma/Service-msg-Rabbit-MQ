@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <link href="css/index.css" rel="stylesheet">
+  <!--Incluindo HTMLX via cdn-->
+  <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+</head>
+
+<body>
+  <h1>Bem vindo</h1>
+</body>
+
+
+
+<h1>Envio de Mensagem</h1>
+<form hx-post="/message" hx-target="#response" hx-swap="innerHTML">
+  <label for="content">Content Message</label>
+  <input id="content" name="content" type="text" required>
+  <label for="channel">Channel</label>
+  <input id="channel" name="channel" type="text" required>
+  <button type="submit">Submit</button>
+</form>
+<div id="response"></div>
+
+<div class="delete">
+  <button hx-get="/message" hx-target="#message" hx-swap="innerHTML">Atualizar Mensagem</button>
+</div>
+<div id="message" class="message"></div>
+
+
+
+</html>

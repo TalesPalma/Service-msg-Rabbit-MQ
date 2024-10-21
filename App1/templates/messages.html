@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mensagens</title>
+</head>
+
+<body>
+  <div class="container-message">
+    <h1>Mensagens</h1>
+    <div id="message">
+      {{range .Items}}
+      <div class="message-card">
+        <p class="message-id">Id: {{.ID}}</p>
+        <p class="message-content">{{.Content}}</p>
+        <p class="message-channel"><strong>Canal:</strong> {{.Channel}}</p>
+        <button class="delete" hx-delete="/message" hx-vals='{"id": {{.ID}}}' hx-swap="outerHTML">Apagar</button>
+      </div>
+      {{end}}
+    </div>
+  </div>
+</body>
+
+</html>
