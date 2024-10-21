@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/TalesPalma/App2/internal/db"
@@ -27,4 +28,16 @@ func getMessages(ctx *gin.Context) {
 
 func errorApi(ctx *gin.Context, err error) {
 	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+}
+
+func deleteMessage(ctx *gin.Context) {
+	id := ctx.Param("id")
+	fmt.Println("id:", id)
+
+	if resp := db.Db.Delete(&models.Message{}, id); resp.Error != nil {
+		errorApi(ctx, resp.Error)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, nil)
 }

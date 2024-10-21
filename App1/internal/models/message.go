@@ -1,11 +1,8 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
+import ()
 
 type Message struct {
-	*gorm.Model
 	Content string `json:"content"`
 	Channel string `json:"channel"`
 }

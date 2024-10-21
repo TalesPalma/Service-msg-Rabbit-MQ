@@ -27,5 +27,5 @@ func routers(r *gin.Engine) {
 	r.GET("/", index)
 	r.GET("/message", loadMessages)
 	r.POST("/message", postMessage)
-	r.DELETE("/message", deleteMessage)
+	r.DELETE("/message/:id", deleteMessage)
 }

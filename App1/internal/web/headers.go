@@ -1,10 +1,11 @@
 package web
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/TalesPalma/GolangRabbitMQ/internal/db"
 	"github.com/TalesPalma/GolangRabbitMQ/internal/models"
 	"github.com/TalesPalma/GolangRabbitMQ/internal/rabbit"
 	"github.com/gin-gonic/gin"
@@ -15,8 +16,29 @@ func index(ctx *gin.Context) {
 }
 
 func loadMessages(ctx *gin.Context) {
-	var list []models.Message
-	db.Db.Find(&list)
+	var list []struct {
+		Id   uint   `json:"ID"`
+		Text string `json:"Text"`
+	}
+
+	response, error := http.Get("http://localhost:8081/messages")
+
+	if error != nil {
+		ctx.HTML(http.StatusOK, "error.html", gin.H{"Error": error})
+		return
+	}
+
+	defer response.Body.Close()
+
+	if error := json.NewDecoder(response.Body).Decode(&list); error != nil {
+		ctx.HTML(http.StatusOK, "error.html", gin.H{"Error": error})
+		return
+	}
+
+	for i := range list {
+		fmt.Println("LISTA:", list[i], " FIM")
+	}
+
 	ctx.HTML(http.StatusOK, "messages.html", gin.H{"Items": list})
 }
 
@@ -30,21 +52,37 @@ func postMessage(ctx *gin.Context) {
 		return
 	}
 
-	if response := db.Db.Create(&message); response.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Error": response.Error})
-		return
-	}
-
-	rabbit.NewRabbit().SendMessage(content)
+	rabbit.NewRabbit().SendMessage(content) // Ja manda para a fila correta
 	ctx.JSON(http.StatusOK, message)
 }
 
 func deleteMessage(ctx *gin.Context) {
-	id := ctx.Query("id")
+	id := ctx.Param("id")
 	log.Println("id:", id)
-	if response := db.Db.Where("id = ?", id).Delete(&models.Message{}); response.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Error": response.Error})
+
+	url := "http://localhost:8081/messages/" + id
+
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err})
 		return
 	}
-	ctx.JSON(http.StatusOK, nil)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err})
+		return
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error": resp.Status})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"Status": resp.StatusCode})
 }

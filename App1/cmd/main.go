@@ -1,10 +1,12 @@
 package main
 
-import "github.com/TalesPalma/GolangRabbitMQ/internal/db"
+import (
+	"github.com/TalesPalma/GolangRabbitMQ/internal/rabbit"
+)
 
 func main() {
-	db.LoadDatabase()
 	infinite := make(chan struct{})
 	go initWebServer(infinite)
+	go rabbit.NewRabbit().ReceiveMessage()
 	<-infinite
 }

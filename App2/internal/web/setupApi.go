@@ -15,4 +15,5 @@ func InitWebServer() {
 func routers(r *gin.Engine) {
 	r.GET("/", index)
 	r.GET("/messages", getMessages)
+	r.DELETE("/messages/:id", deleteMessage)
 }

@@ -125,19 +125,39 @@ button:hover {
 }
 
 .message-content {
-    margin: 0;
-    /* Remove margens */
-    font-size: 16px;
+    margin-bottom: 5px;
+    /* Espaço abaixo do conteúdo */
+    font-size: 14px;
     /* Tamanho da fonte */
     line-height: 1.5;
     /* Altura da linha */
+    color: #333;
+    /* Cor do texto */
+    word-wrap: break-word;
+    /* Quebra de linha automática */
+    overflow-wrap: break-word;
+    /* Quebra de linha automática */
+    white-space: pre-wrap;
+    /* Quebra de linha automática */
 }
 
-.message-channel {
-    margin: 5px 0 0;
-    /* Espaço acima */
-    font-size: 14px;
+.message-id {
+    font-size: 12px;
     /* Tamanho da fonte */
-    color: #555;
+    color: #777;
     /* Cor do texto */
+    margin-bottom: 5px;
+    /* Espaço abaixo do conteúdo */
+    font-style: italic;
+    /* Estilo da fonte */
+    font-weight: bold;
+    /* Peso da fonte */
+    text-decoration: underline;
+    /* Sublinhado */
+    word-wrap: break-word;
+    /* Quebra de linha automática */
+    overflow-wrap: break-word;
+    /* Quebra de linha automática */
+    white-space: pre-wrap;
+    /* Quebra de linha automática */
 }

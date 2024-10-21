@@ -13,11 +13,12 @@
     <div id="message">
       {{range .Items}}
       <div class="message-card">
-        <p class="message-id">Id: {{.ID}}</p>
-        <p class="message-content">{{.Content}}</p>
-        <p class="message-channel"><strong>Canal:</strong> {{.Channel}}</p>
-        <button class="delete" hx-delete="/message" hx-vals='{"id": {{.ID}}}' hx-swap="outerHTML">Apagar</button>
+        <p class="message-id">Id: {{.Id}}</p>
+        <p class="message-content">{{.Text}}</p>
+        <button class="delete" hx-delete="/message/{{.Id}}" hx-swap="outerHTML">Apagar</button>
       </div>
+      {{else}}
+      <p>Não há mensagens</p>
       {{end}}
     </div>
   </div>

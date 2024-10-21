@@ -14,7 +14,7 @@ func (r Rabbit) ReceiveMessage() {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello",
+		"App1Msg",
 		false,
 		false,
 		false,
@@ -41,6 +41,7 @@ func (r Rabbit) ReceiveMessage() {
 		for d := range msg {
 			log.Printf("Received a message: %s", d.Body)
 			ResponseMsg(string(d.Body))
+			r.SendMessage(string("Testando canal:Se ta vendo isso é porque a app2 salvou no db"))
 		}
 	}()
 

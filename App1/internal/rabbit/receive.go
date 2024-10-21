@@ -9,7 +9,7 @@ func (r Rabbit) ReceiveMessage() {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello",
+		"Mensagens",
 		false,
 		false,
 		false,
