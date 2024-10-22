@@ -1,6 +1,10 @@
 package rabbit
 
-import "log"
+import (
+	"log"
+
+	logsservice "github.com/TalesPalma/serviceLog/internal/logsService"
+)
 
 func (r Rabbit) ReceiveMessage() {
 
@@ -9,7 +13,7 @@ func (r Rabbit) ReceiveMessage() {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"Mensagens",
+		"Logs",
 		false,
 		false,
 		false,
@@ -18,7 +22,6 @@ func (r Rabbit) ReceiveMessage() {
 	)
 
 	failOnError(err, "Failed to declare a queue")
-
 	msg, err := ch.Consume(
 		q.Name,
 		"",
@@ -35,6 +38,7 @@ func (r Rabbit) ReceiveMessage() {
 	go func() {
 		for d := range msg {
 			log.Printf("Received a message: %s", d.Body)
+			logsservice.SaveLog(string(d.Body))
 		}
 	}()
 

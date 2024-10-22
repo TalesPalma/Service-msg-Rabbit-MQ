@@ -5,6 +5,33 @@ import (
 	"log"
 )
 
+func QueueDeclares(ch *amqp.Channel, queueNames ...string) {
+	for _, nameQueue := range queueNames {
+		q, err := ch.QueueDeclare(
+			nameQueue, // name
+			false,     // durable
+			false,     // delete when unused
+			false,     // exclusive
+			false,     // no-wait
+			nil,       // arguments
+		)
+
+		failOnError(err, "Failed to declare a queue")
+
+		err = ch.QueueBind(
+			q.Name,          // queue name
+			"",              // Fanout doesn't use routing keys
+			"logs_exchange", // exchange name
+			false,           // no-wait
+			nil,             // arguments
+
+		)
+
+		failOnError(err, "Failed to bind a queue")
+
+	}
+}
+
 func (r Rabbit) SendMessage(bodyMessage string) {
 
 	ch, err := r.Conn.Channel()
@@ -22,24 +49,9 @@ func (r Rabbit) SendMessage(bodyMessage string) {
 	)
 	failOnError(err, "Failed to declare an exchange")
 
-	q, err := ch.QueueDeclare(
-		"App1Msg", // name
-		false,     // durable
-		false,     // delete when unused
-		false,     // exclusive
-		false,     // no-wait
-		nil,       // arguments
-	)
-
+	QueueDeclares(ch, "App1Msg", "Logs")
 	failOnError(err, "Failed to declare a queue")
 
-	err = ch.QueueBind(
-		q.Name,          // queue name
-		"",              // Fanout doesn't use routing keys
-		"logs_exchange", // exchange name
-		false,           // no-wait
-		nil,             // arguments
-	)
 	failOnError(err, "Failed to bind a queue")
 
 	err = ch.Publish(
