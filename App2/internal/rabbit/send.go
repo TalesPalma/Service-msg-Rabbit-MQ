@@ -11,6 +11,17 @@ func (r Rabbit) SendMessage(bodyMessage string) {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
+	err = ch.ExchangeDeclare(
+		"logs_exchange", // name
+		"fanout",        // type
+		true,            // durable
+		false,           // auto-deleted
+		false,           // internal
+		false,           // no-wait
+		nil,             // arguments
+	)
+	failOnError(err, "Failed to declare an exchange")
+
 	q, err := ch.QueueDeclare(
 		"Mensagens", // name
 		false,       // durable
@@ -22,11 +33,20 @@ func (r Rabbit) SendMessage(bodyMessage string) {
 
 	failOnError(err, "Failed to declare a queue")
 
+	err = ch.QueueBind(
+		q.Name,          // queue name
+		"",              //  not use routing_key for fanout
+		"logs_exchange", // exchange name
+		false,           // no-wait
+		nil,             // arguments
+	)
+	failOnError(err, "Failed to bind a queue to an exchange")
+
 	err = ch.Publish(
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
+		"logs_exchange", // exchange
+		"",              // routing key fanout not use
+		false,           // mandatory
+		false,           // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(bodyMessage),
